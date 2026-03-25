@@ -793,3 +793,18 @@ def api_missing(payload: dict):
     if channel not in ("sms", "email"):
         raise HTTPException(status_code=400, detail="channel must be sms or email")
     return missing_message(name, fields, channel)
+from pydantic import BaseModel
+from typing import Optional
+
+class IntakeRequest(BaseModel):
+    category: str
+    client_name: str
+    client_email: Optional[str] = None
+    fico: Optional[int] = None
+
+@app.post("/api/qualify")
+def api_qualify(data: IntakeRequest):
+    return {
+        "status": "success",
+        "data": data.dict()
+    }

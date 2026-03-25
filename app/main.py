@@ -800,7 +800,26 @@ class IntakeRequest(BaseModel):
     category: str
     client_name: str
     client_email: Optional[str] = None
+    client_phone: Optional[str] = None
     fico: Optional[int] = None
+    monthly_income: Optional[float] = None
+    annual_income: Optional[float] = None
+    monthly_debt: Optional[float] = None
+    entity_type: Optional[str] = None
+    industry: Optional[str] = None
+    time_in_business_months: Optional[int] = None
+    annual_revenue: Optional[float] = None
+    avg_monthly_revenue: Optional[float] = None
+    address: Optional[str] = None
+    property_type: Optional[str] = None
+    purchase_price: Optional[float] = None
+    rehab_budget: Optional[float] = None
+    arv: Optional[float] = None
+    market_rent: Optional[float] = None
+    section8_rent: Optional[float] = None
+    taxes: Optional[float] = None
+    insurance: Optional[float] = None
+    hoa: Optional[float] = None
 
 @app.post("/api/qualify")
 def api_qualify(data: IntakeRequest):

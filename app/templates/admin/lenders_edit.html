@@ -1,0 +1,9 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Edit Lender</title></head><body>
+<h2>{{ "Add" if is_new else "Edit" }} Lender</h2><p><a href="/admin/lenders">Back</a></p>
+<form method="post" action="{{ action }}">
+<label>Name</label><br><input name="name" value="{{l.name if l else ''}}" {% if not is_new %}readonly{% endif %} required style="width:420px"><br><br>
+<label>Website</label><br><input name="website" value="{{l.website if l else ''}}" style="width:420px"><br><br>
+<label>Geography</label><br><input name="geography" value="{{l.geography if l else ''}}" style="width:420px"><br><br>
+<label>Categories (comma: real_estate,business,personal)</label><br><input name="categories" value="{{l.categories if l else ''}}" style="width:420px"><br><br>
+<label>Contact Notes</label><br><textarea name="contact_notes" rows="5" cols="70">{{l.contact_notes if l and l.contact_notes else ''}}</textarea><br><br>
+<button type="submit">Save</button></form></body></html>

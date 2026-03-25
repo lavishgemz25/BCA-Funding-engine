@@ -1,0 +1,9 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Register</title></head><body>
+<h2>Create Client Account</h2>{% if error %}<p style="color:red">{{error}}</p>{% endif %}
+<form method="post" action="/client/register">
+<input name="full_name" placeholder="Full Name" required style="width:320px"><br><br>
+<input name="email" placeholder="Email" required style="width:320px"><br><br>
+<input name="phone" placeholder="Phone" style="width:320px"><br><br>
+<input name="password" placeholder="Password" type="password" required style="width:320px"><br><br>
+<button type="submit">Create Account</button></form>
+<p><a href="/client/login">Login</a> | <a href="/">Back</a></p></body></html>

@@ -1,0 +1,7 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Admin Login</title></head><body>
+<h2>Admin Login</h2>{% if error %}<p style="color:red">{{error}}</p>{% endif %}
+<form method="post" action="/admin/login">
+<input name="email" placeholder="Email" required style="width:320px"><br><br>
+<input name="password" placeholder="Password" type="password" required style="width:320px"><br><br>
+<button type="submit">Login</button></form>
+<p><a href="/">Back</a></p></body></html>

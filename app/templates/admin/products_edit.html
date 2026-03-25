@@ -1,0 +1,24 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Edit Product</title></head><body>
+<h2>{{ "Add" if is_new else "Edit" }} Product</h2><p><a href="/admin/products">Back</a></p>
+<form method="post" action="{{ action }}">
+<label>Key</label><br><input name="key" value="{{p.key if p else ''}}" {% if not is_new %}readonly{% endif %} required style="width:420px"><br><br>
+<label>Name</label><br><input name="name" value="{{p.name if p else ''}}" required style="width:420px"><br><br>
+<label>Category</label><br>
+<select name="category" required>
+  <option value="business" {% if p and p.category=='business' %}selected{% endif %}>business</option>
+  <option value="personal" {% if p and p.category=='personal' %}selected{% endif %}>personal</option>
+  <option value="real_estate" {% if p and p.category=='real_estate' %}selected{% endif %}>real_estate</option>
+</select><br><br>
+<label>Priority (lower = preferred)</label><br><input name="priority" value="{{p.priority if p else 50}}" type="number" style="width:120px"><br><br>
+<label>Lender Name</label><br><input name="lender_name" value="{{p.lender_name if p else ''}}" style="width:420px"><br><br>
+<label>Notes</label><br><textarea name="notes" rows="3" cols="70">{{p.notes if p and p.notes else ''}}</textarea><br><br>
+<label>Config JSON</label><br><textarea name="config_json" rows="18" cols="70">{{config_json}}</textarea><br><br>
+
+<label>Verify Interval (days)</label><br><input name="verify_interval_days" value="{{p.verify_interval_days if p and p.verify_interval_days else 30}}" type="number" style="width:120px"><br><br>
+<label>Sources JSON (links to lender matrices/pages)</label><br>
+<textarea name="sources_json" rows="10" cols="70">{{sources_json}}</textarea><br><br>
+{% if p %}
+<p><b>Last Verified:</b> {{ last_verified_display }}</p>
+<p><a href="/admin/products/mark-verified/{{p.id}}">Mark Verified Now</a></p>
+{% endif %}
+<button type="submit">Save</button></form></body></html>

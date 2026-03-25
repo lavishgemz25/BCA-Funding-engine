@@ -1,0 +1,39 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Funding Intake</title></head><body>
+<h2>Funding Intake (Business / Personal / Real Estate)</h2>
+<p><a href="/client/dashboard">Client Dashboard</a> | <a href="/admin/login">Admin</a> | <a href="/docs">API</a></p>
+{% if notice %}<p style="color:#aa0000"><b>{{notice}}</b></p>{% endif %}
+<form method="post" action="/intake">
+<label>Funding Type</label><br>
+<select name="category" required>
+<option value="business">Business Funding</option>
+<option value="personal">Personal Funding</option>
+<option value="real_estate">Real Estate Funding</option>
+</select><br><br>
+<h3>Client</h3>
+<input name="client_name" placeholder="Full Name" required><br><br>
+<input name="client_email" placeholder="Email"><br><br>
+<input name="client_phone" placeholder="Phone"><br><br>
+<h3>Core Personal Data</h3>
+<input name="fico" placeholder="FICO / Credit Score" type="number"><br><br>
+<input name="monthly_income" placeholder="Monthly Income" type="number" step="0.01"><br><br>
+<input name="annual_income" placeholder="Annual Income (optional)" type="number" step="0.01"><br><br>
+<input name="monthly_debt" placeholder="Monthly Debt" type="number" step="0.01"><br><br>
+<h3>Business Data (if Business Funding)</h3>
+<input name="entity_type" placeholder="Entity Type (LLC/S-Corp/etc)"><br><br>
+<input name="industry" placeholder="Industry"><br><br>
+<input name="time_in_business_months" placeholder="Time in Business (months)" type="number"><br><br>
+<input name="annual_revenue" placeholder="Annual Revenue" type="number" step="0.01"><br><br>
+<input name="avg_monthly_revenue" placeholder="Avg Monthly Revenue" type="number" step="0.01"><br><br>
+<h3>Real Estate Data (if Real Estate Funding)</h3>
+<input name="address" placeholder="Property Address"><br><br>
+<input name="property_type" placeholder="Property Type (SFH, 2-4, 5+)"><br><br>
+<input name="purchase_price" placeholder="Purchase Price" type="number" step="0.01"><br><br>
+<input name="rehab_budget" placeholder="Rehab Budget" type="number" step="0.01"><br><br>
+<input name="arv" placeholder="ARV" type="number" step="0.01"><br><br>
+<input name="market_rent" placeholder="Market Rent (monthly)" type="number" step="0.01"><br><br>
+<input name="section8_rent" placeholder="Section 8 Rent (monthly)" type="number" step="0.01"><br><br>
+<input name="taxes" placeholder="Taxes (monthly)" type="number" step="0.01"><br><br>
+<input name="insurance" placeholder="Insurance (monthly)" type="number" step="0.01"><br><br>
+<input name="hoa" placeholder="HOA (monthly)" type="number" step="0.01"><br><br>
+<button type="submit">Run Qualification</button>
+</form></body></html>

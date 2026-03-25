@@ -1,0 +1,10 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Products</title></head><body>
+<h2>Funding Products</h2>
+<p><a href="/admin">Admin Home</a> | <a href="/admin/products/new">Add Product</a> | <a href="/admin/logout">Logout</a></p>
+<table border="1" cellpadding="6" cellspacing="0">
+<tr><th>Key</th><th>Name</th><th>Category</th><th>Priority</th><th>Lender</th><th>Verified</th><th>Active</th><th>Actions</th></tr>
+{% for p in products %}<tr>
+<td>{{p.key}}</td><td>{{p.name}}</td><td>{{p.category}}</td><td>{{p.priority}}</td><td>{{p.lender_name}}</td><td>{% if p._is_stale %}<span style='color:#b00000'><b>STALE</b></span>{% else %}OK{% endif %}</td><td>{{"YES" if p.is_active else "NO"}}</td>
+<td><a href="/admin/products/edit/{{p.id}}">Edit</a> | <a href="/admin/products/toggle/{{p.id}}">Toggle</a></td>
+</tr>{% endfor %}
+</table></body></html>

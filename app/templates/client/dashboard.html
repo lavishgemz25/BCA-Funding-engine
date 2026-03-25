@@ -1,0 +1,8 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Dashboard</title></head><body>
+<h2>Client Dashboard</h2><p>Logged in as {{email}} | <a href="/client/logout">Logout</a></p>
+<table border="1" cellpadding="6" cellspacing="0">
+<tr><th>Date</th><th>Type</th><th>Top Product</th><th>Status</th><th>Score</th><th>PDF</th></tr>
+{% for r in rows %}<tr>
+<td>{{r.created_at}}</td><td>{{r.category}}</td><td>{{r.top_product}}</td><td>{{r.status}}</td><td>{{r.score}}</td>
+<td>{% if r.pdf_url %}<a href="{{r.pdf_url}}">PDF</a>{% else %}—{% endif %}</td></tr>{% endfor %}
+</table></body></html>

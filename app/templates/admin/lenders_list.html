@@ -1,0 +1,10 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Lenders</title></head><body>
+<h2>Lender Directory</h2>
+<p><a href="/admin">Admin Home</a> | <a href="/admin/lenders/new">Add Lender</a> | <a href="/admin/logout">Logout</a></p>
+<table border="1" cellpadding="6" cellspacing="0">
+<tr><th>Name</th><th>Geo</th><th>Categories</th><th>Active</th><th>Actions</th></tr>
+{% for l in lenders %}<tr>
+<td>{{l.name}}</td><td>{{l.geography}}</td><td>{{l.categories}}</td><td>{{"YES" if l.is_active else "NO"}}</td>
+<td><a href="/admin/lenders/edit/{{l.id}}">Edit</a> | <a href="/admin/lenders/toggle/{{l.id}}">Toggle</a></td>
+</tr>{% endfor %}
+</table></body></html>

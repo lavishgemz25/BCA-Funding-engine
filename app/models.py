@@ -33,9 +33,12 @@ class Product(Base):
     lender_name=Column(String, nullable=True)
     notes=Column(Text, nullable=True)
     config_json=Column(Text, nullable=False)
+    sources_json=Column(Text, nullable=True)
+    last_verified_at=Column(DateTime, nullable=True)
+    verify_interval_days=Column(Integer, default=30)
     is_active=Column(Boolean, default=True)
     created_at=Column(DateTime, default=datetime.utcnow)
-
+    
 class Submission(Base):
     __tablename__="submissions"
     id=Column(Integer, primary_key=True)

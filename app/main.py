@@ -822,8 +822,140 @@ class IntakeRequest(BaseModel):
     hoa: Optional[float] = None
 
 @app.post("/api/qualify")
-def api_qualify(data: IntakeRequest):
-    return {
-        "status": "success",
-        "data": data.dict()
+def api_qualify(req: IntakeRequest, db: Session = Depends(get_db)):
+    payload = {
+        "fico": req.fico,
+        "credit_score": req.fico,
+        "monthly_income": req.monthly_income,
+        "annual_income": req.annual_income,
+        "monthly_debt": req.monthly_debt,
+        "entity_type": req.entity_type,
+        "industry": req.industry,
+        "time_in_business_months": req.time_in_business_months,
+        "annual_revenue": req.annual_revenue,
+        "avg_monthly_revenue": req.avg_monthly_revenue,
+        "address": req.address,
+        "property_type": req.property_type,
+        "purchase_price": req.purchase_price,
+        "rehab_budget": req.rehab_budget,
+        "arv": req.arv,
+        "market_rent": req.market_rent,
+        "section8_rent": req.section8_rent,
+        "taxes": req.taxes,
+        "insurance": req.insurance,
+        "hoa": req.hoa,
+        "mgmt_pct": 0.13,
+        "vacancy_pct": 0.08,
+        "capex_pct": 0.05,
     }
+
+    sub = Submission(
+        user_id=None,
+        category=req.category,
+        client_name=req.client_name,
+        client_email=req.client_email,
+        client_phone=req.client_phone,
+        payload_json=json.dumps(payload),
+    )
+    db.add(sub)
+    db.commit()
+    db.refresh(sub)
+
+    top, ranking = run(db, req.category, payload)
+
+    lenders = []
+    for l in db.query(Lender).filter(Lender.is_active == True).all():
+        cats = [c.strip() for c in (l.categories or "").split(",") if c.strip()]
+        if req.category in cats:
+            lenders.append(
+                {
+                    "name": l.name,
+                    "website": l.website,
+                    "geography": l.geography,
+                    "contact_notes": l.contact_notes,
+                }
+            )
+
+    if top and top.get("lender_name") and not any(x["name"] == top["lender_name"] for x in lenders):
+        lenders.insert(
+            0,
+            {
+                "name": top.get("lender_name"),
+                "website": "",
+                "geography": "",
+                "contact_notes": "Add lender details in Admin → Lender Directory.",
+            },
+        )
+
+    missing = []
+    if top:
+        for r in top.get("reasons", []):
+            if isinstance(r, str) and r.startswith("Missing required fields:"):
+                missing = [x.strip() for x in r.split(":", 1)[1].split(",") if x.strip()]
+
+    pdf_rel = f"reports/submission_{sub.id}.pdf"
+    pdf_path = os.path.join("app/static", pdf_rel)
+    os.makedirs(os.path.dirname(pdf_path), exist_ok=True)
+
+    build_pdf(
+        pdf_path,
+        {
+            "category": req.category,
+            "client_name": req.client_name,
+            "client_email": req.client_email,
+            "client_phone": req.client_phone,
+        },
+        top,
+        ranking,
+        lenders,
+    )
+
+    dec = Decision(
+        submission_id=sub.id,
+        user_id=None,
+        top_product_key=top["product_key"] if top else "NONE",
+        top_status=top["status"] if top else "NONE",
+        top_score=top["score"] if top else 0,
+        ranking_json=json.dumps(ranking),
+        missing_fields_json=json.dumps(missing) if missing else None,
+        pdf_path=pdf_rel,
+    )
+    db.add(dec)
+    db.commit()
+
+    msgs = {}
+    if missing:
+        msgs.update(missing_message(req.client_name, missing, "sms"))
+        msgs.update(missing_message(req.client_name, missing, "email"))
+
+    matched_with = []
+    for r in ranking:
+        if r.get("status") in ("APPROVED", "CONDITIONAL") and r.get("lender_name"):
+            lrec = db.query(Lender).filter(Lender.name == r["lender_name"]).first()
+            matched_with.append(
+                {
+                    "product_key": r["product_key"],
+                    "product_name": r["product_name"],
+                    "status": r["status"],
+                    "score": r["score"],
+                    "lender": {
+                        "name": lrec.name if lrec else r["lender_name"],
+                        "website": lrec.website if lrec else "",
+                        "geography": lrec.geography if lrec else "",
+                        "contact_notes": lrec.contact_notes if lrec else "",
+                    },
+                }
+            )
+
+    return JSONResponse(
+        {
+            "submission_id": sub.id,
+            "top": top,
+            "matched_with": matched_with[:25],
+            "ranking": ranking,
+            "route_lenders": lenders[:20],
+            "pdf_url": f"/static/{pdf_rel}",
+            "missing_fields": missing,
+            **msgs,
+        }
+    )
